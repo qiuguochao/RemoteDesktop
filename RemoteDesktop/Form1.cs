@@ -27,10 +27,11 @@ namespace RemoteDesktop
             this.skinRollingBar1.Visible = false;
             //var abcd = EncryptDecryptHelper.DESEncrypt("我哎你我哎你我哎你我哎你我哎你我哎你我哎你我哎你[];");
         }
+        #region 私有方法
         /// <summary>
         /// 服务器树形结构初始化
         /// </summary>
-        public void InitTree()
+        private void InitTree()
         {
             var typeData = DataHelper.GetNodeLevelData(Enums.LevelEnum.TypeNode);
             var serverData = DataHelper.GetNodeLevelData(Enums.LevelEnum.ServerNode);
@@ -56,6 +57,63 @@ namespace RemoteDesktop
                 this.treeView1.Nodes[0].Nodes.Add(tchild);
             }
         }
+        //----------------------------------------------------------------------------
+        private void OnFatalErrorEvent1(object sender, AxMSTSCLib.IMsTscAxEvents_OnFatalErrorEvent e)
+        {
+            MessageBox.Show(e.errorCode.ToString() + "a", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        }
+        private void OnFatalErrorEvent2(object sender, AxMSTSCLib.IMsTscAxEvents_OnLogonErrorEvent e)
+        {
+            //登入失败要用
+            MessageBox.Show(e.lError.ToString() + "b", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        }
+        private void OnDisconnectedFun(object sender, AxMSTSCLib.IMsTscAxEvents_OnDisconnectedEvent e)
+        {
+            //260 IP错误
+            //516  远程服务器可能异常
+            //MessageBox.Show(e.discReason.ToString() + "c", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            try
+            {
+                //切换成已断开图标
+                var selectedNode = treeView1.SelectedNode;
+                selectedNode.ImageIndex = 4;
+                selectedNode.SelectedImageIndex = 4;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
+        }
+        private void OnFatalErrorEvent3(object sender, AxMSTSCLib.IMsTscAxEvents_OnWarningEvent e)
+        {
+            MessageBox.Show(e.warningCode.ToString() + "d", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        }
+        private void OnFatalErrorEvent4(object sender, EventArgs e)
+        {
+            //顺利连接成功
+            //MessageBox.Show("e", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            try
+            {
+                //切换成已断开图标
+                var selectedNode = treeView1.SelectedNode;
+                selectedNode.ImageIndex = 0;
+                selectedNode.SelectedImageIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
+        //-------------------------------------------------------------------------------------------
+        #endregion
+
+        #region 事件处理（菜单 树形结构区域）
         /// <summary>
         /// 判断右键菜单显现
         /// </summary>
@@ -74,13 +132,13 @@ namespace RemoteDesktop
                 }
                 treeView1.SelectedNode = CurrentNode;
                 //主节点
-                if (CurrentNode.Level== 0)
+                if (CurrentNode.Level == 0)
                 {
                     CurrentNode.ContextMenuStrip = this.contextMenuStrip2;
                     return;
                 }
                 //分类节点
-                if (CurrentNode.Level==1)
+                if (CurrentNode.Level == 1)
                 {
                     CurrentNode.ContextMenuStrip = this.contextMenuStrip3;
                     return;
@@ -90,11 +148,13 @@ namespace RemoteDesktop
                 {
                     CurrentNode.ContextMenuStrip = this.contextMenuStrip1;
                     var rdp = rdpcArry.Where(p => p.Name == CurrentNode.Name);
+                    //右键菜单显示控制
                     foreach (ToolStripItem info in CurrentNode.ContextMenuStrip.Items)
                     {
                         switch (info.Text)
                         {
                             case "断开连接":
+                            case "断开连接并关闭选项卡":
                                 if (rdp.Count() > 0 && rdp.FirstOrDefault().Connected == 1)
                                 {
                                     info.Enabled = true;
@@ -119,7 +179,7 @@ namespace RemoteDesktop
                         }
                     }
 
-                    
+
                     return;
                 }
             }
@@ -165,7 +225,7 @@ namespace RemoteDesktop
                     return;
                 }
                 typeData.Where(p => p.NodeGuid == selectedGuid).FirstOrDefault().NodeName = newText;
-                DataHelper.SaveData();          
+                DataHelper.SaveData();
             }
             catch (Exception ex)
             {
@@ -176,20 +236,32 @@ namespace RemoteDesktop
                 this.skinRollingBar1.StopRolling();
                 this.skinRollingBar1.Visible = false;
             }
-          
-        }
 
+        }
+        /// <summary>
+        /// 新增服务器节点 （右键）
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void 新增服务器ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selectedGuid = treeView1.SelectedNode.Name;
             new AddServerForm(selectedGuid).Show(this);
         }
-
+        /// <summary>
+        /// 新增服务器节点 （菜单）
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
             new AddServerForm(null).Show(this);
         }
-
+        /// <summary>
+        /// 删除服务器
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void 删除服务器ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -211,7 +283,11 @@ namespace RemoteDesktop
 
 
         }
-
+        /// <summary>
+        /// 删除服务器分类
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void 删除服务器分类ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -253,9 +329,20 @@ namespace RemoteDesktop
             {
                 if (e.Node.Level == 2)
                 {
+                    //远程服务器对应选项卡是否打开
                     if (this.tabControl1.Controls.Find(e.Node.Name, true).Count() > 0)
                     {
-                        MessageBox.Show("请不要重复连接", null, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        //远程服务器是否已经连接
+                        var server = rdpcArry.Where(p => p.Name == e.Node.Name).FirstOrDefault();
+                        if (server.Connected == 1)
+                        {
+                            MessageBox.Show("请不要重复连接", null, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                        }
+                        else
+                        {
+                            server.Connect();
+                        }
                         return;
                     }
                     TabPage tp = new TabPage();
@@ -281,6 +368,12 @@ namespace RemoteDesktop
                     rdpc.ConnectingText = "正在连接.....";
                     rdpc.ColorDepth = 24;
                     rdpc.Name = e.Node.Name;
+                    rdpc.OnFatalError += new AxMSTSCLib.IMsTscAxEvents_OnFatalErrorEventHandler(OnFatalErrorEvent1);
+                    rdpc.OnLogonError += new AxMSTSCLib.IMsTscAxEvents_OnLogonErrorEventHandler(OnFatalErrorEvent2);
+                    //断开连接事件触发
+                    rdpc.OnDisconnected += new AxMSTSCLib.IMsTscAxEvents_OnDisconnectedEventHandler(OnDisconnectedFun);
+                    rdpc.OnWarning += new AxMSTSCLib.IMsTscAxEvents_OnWarningEventHandler(OnFatalErrorEvent3);
+                    rdpc.OnConnected += new EventHandler(OnFatalErrorEvent4);
                     rdpc.Connect();
                     rdpcArry.Add(rdpc);
                 }
@@ -290,13 +383,33 @@ namespace RemoteDesktop
 
                 MessageBox.Show(ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
-        }
 
+        }
+        /// <summary>
+        ///  断开连接
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void 断开连接ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selectedNode = treeView1.SelectedNode;
-            rdpcArry.Where(p=>p.Name==selectedNode.Name).FirstOrDefault().Disconnect();
+            rdpcArry.Where(p => p.Name == selectedNode.Name).FirstOrDefault().Disconnect();
         }
+        /// <summary>
+        /// 断开连接并关闭选项卡
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 断开连接并关闭选项卡ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedNode = treeView1.SelectedNode;
+            rdpcArry.Where(p => p.Name == selectedNode.Name).FirstOrDefault().Disconnect();
+            this.tabControl1.TabPages.RemoveByKey(selectedNode.Name);
+        }
+        #endregion
+
+        #region 事件处理（tabpage区域）
+        #endregion
+
     }
 }

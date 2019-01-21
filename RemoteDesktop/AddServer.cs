@@ -70,8 +70,9 @@ namespace RemoteDesktop
                 TreeNode tchild = new TreeNode();
                 tchild.Name = guid;
                 tchild.Text = this.textBox1.Text;
-                tchild.ImageIndex = 3;
-                tchild.SelectedImageIndex = 3;
+                //显示图标
+                tchild.ImageIndex = 4;
+                tchild.SelectedImageIndex = 4;
                 var parentNode = ((TreeView)frm1.Controls["treeView1"]).Nodes.Find(selectedValue, true)[0];
                 parentNode.Nodes.Add(tchild);
                 parentNode.ExpandAll();
