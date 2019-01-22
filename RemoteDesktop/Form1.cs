@@ -57,18 +57,22 @@ namespace RemoteDesktop
                 this.treeView1.Nodes[0].Nodes.Add(tchild);
             }
         }
-        //----------------------------------------------------------------------------
-        private void OnFatalErrorEvent1(object sender, AxMSTSCLib.IMsTscAxEvents_OnFatalErrorEvent e)
-        {
-            MessageBox.Show(e.errorCode.ToString() + "a", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-        }
+        /// <summary>
+        /// 登入失败要用
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnFatalErrorEvent2(object sender, AxMSTSCLib.IMsTscAxEvents_OnLogonErrorEvent e)
         {
             //登入失败要用
             MessageBox.Show(e.lError.ToString() + "b", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
         }
+        /// <summary>
+        /// 断开调用方法
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnDisconnectedFun(object sender, AxMSTSCLib.IMsTscAxEvents_OnDisconnectedEvent e)
         {
             //260 IP错误
@@ -77,9 +81,21 @@ namespace RemoteDesktop
             try
             {
                 //切换成已断开图标
-                var selectedNode = treeView1.SelectedNode;
-                selectedNode.ImageIndex = 4;
-                selectedNode.SelectedImageIndex = 4;
+                var currentClient = (AxMSTSCLib.AxMsRdpClient8NotSafeForScripting)sender;
+                var currentdNode = treeView1.Nodes.Find(currentClient.Name, true)[0];
+                currentdNode.ImageIndex = 4;
+                currentdNode.SelectedImageIndex = 4;
+                switch (e.discReason)
+                {
+                    case 260:
+                        MessageBox.Show("请检查输入的IP是否有问题！", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                    case 516:
+                        MessageBox.Show("远程服务器可能未连接或异常！", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                    default:
+                        break;
+                }
             }
             catch (Exception ex)
             {
@@ -88,11 +104,11 @@ namespace RemoteDesktop
 
 
         }
-        private void OnFatalErrorEvent3(object sender, AxMSTSCLib.IMsTscAxEvents_OnWarningEvent e)
-        {
-            MessageBox.Show(e.warningCode.ToString() + "d", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-        }
+        /// <summary>
+        /// 连接成功调用方法
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnFatalErrorEvent4(object sender, EventArgs e)
         {
             //顺利连接成功
@@ -100,7 +116,9 @@ namespace RemoteDesktop
             try
             {
                 //切换成已断开图标
-                var selectedNode = treeView1.SelectedNode;
+                //var selectedNode = treeView1.SelectedNode;
+                var currentClient = (AxMSTSCLib.AxMsRdpClient8NotSafeForScripting)sender;
+                var selectedNode = treeView1.Nodes.Find(currentClient.Name, true)[0];
                 selectedNode.ImageIndex = 0;
                 selectedNode.SelectedImageIndex = 0;
             }
@@ -110,7 +128,72 @@ namespace RemoteDesktop
             }
 
         }
-        //-------------------------------------------------------------------------------------------
+        /// <summary>
+        /// 服务器连接
+        /// </summary>
+        /// <param name="node"></param>
+        private void ConnectingServer(TreeNode node)
+        {
+            try
+            {
+                if (node.Level == 2)
+                {
+                    //远程服务器对应选项卡是否打开
+                    if (this.tabControl1.Controls.Find(node.Name, true).Count() > 0)
+                    {
+                        //显示当前选项卡
+                        this.tabControl1.SelectTab(this.tabControl1.Controls.Find(node.Name, true)[0].TabIndex);
+                        //远程服务器是否已经连接
+                        var server = rdpcArry.Where(p => p.Name == node.Name).FirstOrDefault();
+                        if (server.Connected != 0)
+                        {
+                            MessageBox.Show("请不要重复连接", null, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                        }
+                        else
+                        {
+                            server.Connect();
+                        }
+                        return;
+                    }
+                    TabPage tp = new TabPage();
+                    tp.Name = node.Name;
+                    tp.Text = node.Text;
+                    tp.UseVisualStyleBackColor = true;
+                    tp.Height = this.tabControl1.Height - 20;
+                    tp.Width = this.tabControl1.Width - 20;
+                    this.tabControl1.Controls.Add(tp);
+                    this.tabControl1.SelectedTab = tp;
+                    AxMSTSCLib.AxMsRdpClient8NotSafeForScripting rdpc = new AxMSTSCLib.AxMsRdpClient8NotSafeForScripting();
+                    rdpc.Dock = DockStyle.Fill;
+                    tp.Controls.Add(rdpc);
+                    var currentServer = DataHelper.CurrentData.Servers.Where(p => p.ServerGuid == node.Name).FirstOrDefault();
+                    rdpc.Server = currentServer.Ip;                                     //远程桌面的IP地址或者域名
+                    rdpc.Domain = currentServer.Domain;                                 //远程服务器所在的域
+                    rdpc.UserName = currentServer.UserName;                             //系统用户名
+                    rdpc.AdvancedSettings2.ClearTextPassword = currentServer.Password;  //系统登录密码
+                    rdpc.AdvancedSettings2.RDPPort = 3389;
+                    rdpc.AdvancedSettings2.RedirectDrives = true;
+                    rdpc.AdvancedSettings2.RedirectPrinters = true;
+                    rdpc.ConnectingText = "正在连接.....";
+                    rdpc.ColorDepth = 24;
+                    rdpc.Name = node.Name;
+                    //登入失败事件触发
+                    rdpc.OnLogonError += new AxMSTSCLib.IMsTscAxEvents_OnLogonErrorEventHandler(OnFatalErrorEvent2);
+                    //断开连接事件触发
+                    rdpc.OnDisconnected += new AxMSTSCLib.IMsTscAxEvents_OnDisconnectedEventHandler(OnDisconnectedFun);
+                    //连接成功事件触发
+                    rdpc.OnConnected += new EventHandler(OnFatalErrorEvent4);
+                    rdpc.Connect();
+                    rdpcArry.Add(rdpc);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
         #endregion
 
         #region 事件处理（菜单 树形结构区域）
@@ -155,6 +238,7 @@ namespace RemoteDesktop
                         {
                             case "断开连接":
                             case "断开连接并关闭选项卡":
+                            case "全屏(或双击选项卡标题)":
                                 if (rdp.Count() > 0 && rdp.FirstOrDefault().Connected == 1)
                                 {
                                     info.Enabled = true;
@@ -267,6 +351,14 @@ namespace RemoteDesktop
             try
             {
                 var selected = treeView1.SelectedNode;
+                //远程服务器是否已经连接
+                var server = rdpcArry.Where(p => p.Name == selected.Name).FirstOrDefault();
+                if (server!=null&&server.Connected != 0)
+                {
+                    MessageBox.Show("请先断开连接在删除！", null, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+
+                }
                 var guid = selected.Name;
                 //删除数据节点
                 DataHelper.CurrentData.Nodes.RemoveAll(p => p.NodeGuid == guid);
@@ -325,63 +417,14 @@ namespace RemoteDesktop
         /// <param name="e"></param>
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            try
+            var selectedNode = e.Node;
+            if (this.tabControl1.InvokeRequired)
             {
-                if (e.Node.Level == 2)
-                {
-                    //远程服务器对应选项卡是否打开
-                    if (this.tabControl1.Controls.Find(e.Node.Name, true).Count() > 0)
-                    {
-                        //远程服务器是否已经连接
-                        var server = rdpcArry.Where(p => p.Name == e.Node.Name).FirstOrDefault();
-                        if (server.Connected == 1)
-                        {
-                            MessageBox.Show("请不要重复连接", null, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                        }
-                        else
-                        {
-                            server.Connect();
-                        }
-                        return;
-                    }
-                    TabPage tp = new TabPage();
-                    tp.Name = e.Node.Name;
-                    tp.Text = e.Node.Text;
-                    tp.UseVisualStyleBackColor = true;
-                    tp.Height = this.tabControl1.Height - 20;
-                    tp.Width = this.tabControl1.Width - 20;
-
-                    this.tabControl1.Controls.Add(tp);
-                    this.tabControl1.SelectedTab = tp;
-                    AxMSTSCLib.AxMsRdpClient8NotSafeForScripting rdpc = new AxMSTSCLib.AxMsRdpClient8NotSafeForScripting();
-                    rdpc.Dock = DockStyle.Fill;
-                    tp.Controls.Add(rdpc);
-                    var currentServer = DataHelper.CurrentData.Servers.Where(p => p.ServerGuid == e.Node.Name).FirstOrDefault();
-                    rdpc.Server = currentServer.Ip;                                     //远程桌面的IP地址或者域名
-                    rdpc.Domain = currentServer.Domain;                                 //远程服务器所在的域
-                    rdpc.UserName = currentServer.UserName;                             //系统用户名
-                    rdpc.AdvancedSettings2.ClearTextPassword = currentServer.Password;  //系统登录密码
-                    rdpc.AdvancedSettings2.RDPPort = 3389;
-                    rdpc.AdvancedSettings2.RedirectDrives = true;
-                    rdpc.AdvancedSettings2.RedirectPrinters = true;
-                    rdpc.ConnectingText = "正在连接.....";
-                    rdpc.ColorDepth = 24;
-                    rdpc.Name = e.Node.Name;
-                    rdpc.OnFatalError += new AxMSTSCLib.IMsTscAxEvents_OnFatalErrorEventHandler(OnFatalErrorEvent1);
-                    rdpc.OnLogonError += new AxMSTSCLib.IMsTscAxEvents_OnLogonErrorEventHandler(OnFatalErrorEvent2);
-                    //断开连接事件触发
-                    rdpc.OnDisconnected += new AxMSTSCLib.IMsTscAxEvents_OnDisconnectedEventHandler(OnDisconnectedFun);
-                    rdpc.OnWarning += new AxMSTSCLib.IMsTscAxEvents_OnWarningEventHandler(OnFatalErrorEvent3);
-                    rdpc.OnConnected += new EventHandler(OnFatalErrorEvent4);
-                    rdpc.Connect();
-                    rdpcArry.Add(rdpc);
-                }
+                this.tabControl1.Invoke(new Action<TreeNode>(ConnectingServer), selectedNode);
             }
-            catch (Exception ex)
+            else
             {
-
-                MessageBox.Show(ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ConnectingServer(selectedNode);
             }
 
         }
@@ -406,10 +449,35 @@ namespace RemoteDesktop
             rdpcArry.Where(p => p.Name == selectedNode.Name).FirstOrDefault().Disconnect();
             this.tabControl1.TabPages.RemoveByKey(selectedNode.Name);
         }
+        /// <summary>
+        /// 远程连接(右键菜单)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 远程连接双击可ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedNode = treeView1.SelectedNode;
+            if (this.tabControl1.InvokeRequired)
+            {
+                this.tabControl1.Invoke(new Action<TreeNode>(ConnectingServer), selectedNode);
+            }
+            else
+            {
+                ConnectingServer(selectedNode);
+            }
+        }
         #endregion
 
         #region 事件处理（tabpage区域）
+        /// <summary>
+        /// 双击选项卡标题全屏
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabControl1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            MessageBox.Show("111", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
         #endregion
-
     }
 }

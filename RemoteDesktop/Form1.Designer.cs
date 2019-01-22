@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("远程");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            CCWin.SkinControl.SkinRollingBarThemeBase skinRollingBarThemeBase1 = new CCWin.SkinControl.SkinRollingBarThemeBase();
+            CCWin.SkinControl.SkinRollingBarThemeBase skinRollingBarThemeBase3 = new CCWin.SkinControl.SkinRollingBarThemeBase();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.远程ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,6 +57,7 @@
             this.重命名ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.skinRollingBar1 = new CCWin.SkinControl.SkinRollingBar();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.放大或双击选项卡标题ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
@@ -176,15 +177,17 @@
             this.远程连接双击可ToolStripMenuItem,
             this.删除服务器ToolStripMenuItem,
             this.断开连接ToolStripMenuItem,
-            this.断开连接并关闭选项卡ToolStripMenuItem});
+            this.断开连接并关闭选项卡ToolStripMenuItem,
+            this.放大或双击选项卡标题ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(197, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 136);
             // 
             // 远程连接双击可ToolStripMenuItem
             // 
             this.远程连接双击可ToolStripMenuItem.Name = "远程连接双击可ToolStripMenuItem";
             this.远程连接双击可ToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.远程连接双击可ToolStripMenuItem.Text = "远程连接（或双击）";
+            this.远程连接双击可ToolStripMenuItem.Click += new System.EventHandler(this.远程连接双击可ToolStripMenuItem_Click);
             // 
             // 删除服务器ToolStripMenuItem
             // 
@@ -264,14 +267,14 @@
             this.skinRollingBar1.Style = CCWin.SkinControl.RollingBarStyle.ChromeOneQuarter;
             this.skinRollingBar1.TabIndex = 8;
             this.skinRollingBar1.TabStop = false;
-            skinRollingBarThemeBase1.BackColor = System.Drawing.Color.White;
-            skinRollingBarThemeBase1.BaseColor = System.Drawing.Color.DodgerBlue;
-            skinRollingBarThemeBase1.DiamondColor = System.Drawing.Color.Transparent;
-            skinRollingBarThemeBase1.PenWidth = 1F;
-            skinRollingBarThemeBase1.Radius1 = 10;
-            skinRollingBarThemeBase1.Radius2 = 24;
-            skinRollingBarThemeBase1.SpokeNum = 12;
-            this.skinRollingBar1.XTheme = skinRollingBarThemeBase1;
+            skinRollingBarThemeBase3.BackColor = System.Drawing.Color.White;
+            skinRollingBarThemeBase3.BaseColor = System.Drawing.Color.DodgerBlue;
+            skinRollingBarThemeBase3.DiamondColor = System.Drawing.Color.Transparent;
+            skinRollingBarThemeBase3.PenWidth = 1F;
+            skinRollingBarThemeBase3.Radius1 = 10;
+            skinRollingBarThemeBase3.Radius2 = 24;
+            skinRollingBarThemeBase3.SpokeNum = 12;
+            this.skinRollingBar1.XTheme = skinRollingBarThemeBase3;
             // 
             // tabControl1
             // 
@@ -281,6 +284,13 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1054, 778);
             this.tabControl1.TabIndex = 9;
+            this.tabControl1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseDoubleClick);
+            // 
+            // 放大或双击选项卡标题ToolStripMenuItem
+            // 
+            this.放大或双击选项卡标题ToolStripMenuItem.Name = "放大或双击选项卡标题ToolStripMenuItem";
+            this.放大或双击选项卡标题ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.放大或双击选项卡标题ToolStripMenuItem.Text = "全屏(或双击选项卡标题)";
             // 
             // Form1
             // 
@@ -330,6 +340,7 @@
         private System.Windows.Forms.ToolStripMenuItem 远程连接双击可ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 断开连接ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 断开连接并关闭选项卡ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 放大或双击选项卡标题ToolStripMenuItem;
     }
 }
 
