@@ -65,7 +65,7 @@ namespace RemoteDesktop
         private void OnFatalErrorEvent2(object sender, AxMSTSCLib.IMsTscAxEvents_OnLogonErrorEvent e)
         {
             //登入失败要用
-            MessageBox.Show(e.lError.ToString() + "b", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //MessageBox.Show(e.lError.ToString() + "b", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
         }
         /// <summary>
@@ -85,6 +85,16 @@ namespace RemoteDesktop
                 var currentdNode = treeView1.Nodes.Find(currentClient.Name, true)[0];
                 currentdNode.ImageIndex = 4;
                 currentdNode.SelectedImageIndex = 4;
+                //显示已断开(没有删除选项卡的前提)
+                var currentPage = this.tabControl1.Controls.Find(currentClient.Name, true);
+                if (currentPage.Count()>0)
+                {
+                    currentPage[0].Controls.Find("connStr", true)[0].Visible=true;
+                }
+                else
+                {
+                    GC.Collect();
+                }
                 switch (e.discReason)
                 {
                     case 260:
@@ -129,6 +139,25 @@ namespace RemoteDesktop
 
         }
         /// <summary>
+        /// 开始连接调用方法
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnConnectingEvent(object sender, EventArgs e)
+        {
+            try
+            {
+                var currentClient = (AxMSTSCLib.AxMsRdpClient8NotSafeForScripting)sender;
+                var currentPage = this.tabControl1.Controls.Find(currentClient.Name, true)[0];
+                currentPage.Controls.Find("connStr", true)[0].Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
+        /// <summary>
         /// 服务器连接
         /// </summary>
         /// <param name="node"></param>
@@ -142,7 +171,8 @@ namespace RemoteDesktop
                     if (this.tabControl1.Controls.Find(node.Name, true).Count() > 0)
                     {
                         //显示当前选项卡
-                        this.tabControl1.SelectTab(this.tabControl1.Controls.Find(node.Name, true)[0].TabIndex);
+                        var currentPage = this.tabControl1.Controls.Find(node.Name, true)[0];
+                        this.tabControl1.SelectTab(currentPage.TabIndex);
                         //远程服务器是否已经连接
                         var server = rdpcArry.Where(p => p.Name == node.Name).FirstOrDefault();
                         if (server.Connected != 0)
@@ -160,8 +190,16 @@ namespace RemoteDesktop
                     tp.Name = node.Name;
                     tp.Text = node.Text;
                     tp.UseVisualStyleBackColor = true;
-                    tp.Height = this.tabControl1.Height - 20;
-                    tp.Width = this.tabControl1.Width - 20;
+                    //tp.Height = this.tabControl1.Height - 20;
+                    //tp.Width = this.tabControl1.Width - 20;
+                    //断开提示
+                    Label connlabel1 = new Label();
+                    connlabel1.Dock = System.Windows.Forms.DockStyle.Fill;
+                    connlabel1.Name = "connStr";
+                    connlabel1.Text = "已断开";
+                    connlabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                    tp.Controls.Add(connlabel1);
+                    //tabpage加入tabcontrol
                     this.tabControl1.Controls.Add(tp);
                     this.tabControl1.SelectedTab = tp;
                     AxMSTSCLib.AxMsRdpClient8NotSafeForScripting rdpc = new AxMSTSCLib.AxMsRdpClient8NotSafeForScripting();
@@ -182,10 +220,13 @@ namespace RemoteDesktop
                     rdpc.OnLogonError += new AxMSTSCLib.IMsTscAxEvents_OnLogonErrorEventHandler(OnFatalErrorEvent2);
                     //断开连接事件触发
                     rdpc.OnDisconnected += new AxMSTSCLib.IMsTscAxEvents_OnDisconnectedEventHandler(OnDisconnectedFun);
+                    //开始连接事件触发
+                    rdpc.OnConnecting += new EventHandler(OnConnectingEvent);
                     //连接成功事件触发
                     rdpc.OnConnected += new EventHandler(OnFatalErrorEvent4);
                     rdpc.Connect();
                     rdpcArry.Add(rdpc);
+                    connlabel1.Visible = false;
                 }
             }
             catch (Exception ex)
@@ -447,6 +488,8 @@ namespace RemoteDesktop
         {
             var selectedNode = treeView1.SelectedNode;
             rdpcArry.Where(p => p.Name == selectedNode.Name).FirstOrDefault().Disconnect();
+            //删除tabpage也要删除list中的数据
+            rdpcArry.RemoveAll(p => p.Name == selectedNode.Name);
             this.tabControl1.TabPages.RemoveByKey(selectedNode.Name);
         }
         /// <summary>
@@ -466,6 +509,20 @@ namespace RemoteDesktop
                 ConnectingServer(selectedNode);
             }
         }
+        /// <summary>
+        /// 右键全屏
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 放大或双击选项卡标题ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedNode = this.treeView1.SelectedNode;
+            //Rectangle ScreenArea = System.Windows.Forms.Screen.GetBounds(this);
+            //this.tabControl1.Width= ScreenArea.Width;
+            //this.tabControl1.Height = ScreenArea.Height;
+            rdpcArry.Where(p => p.Name == selectedNode.Name).FirstOrDefault().FullScreen=true;
+
+        }
         #endregion
 
         #region 事件处理（tabpage区域）
@@ -479,5 +536,14 @@ namespace RemoteDesktop
             MessageBox.Show("111", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         #endregion
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            foreach (var item in rdpcArry)
+            {
+                //item.DesktopHeight = this.tabControl1.Height;
+                //item.DesktopWidth= this.tabControl1.Width;
+            }
+        }
     }
 }

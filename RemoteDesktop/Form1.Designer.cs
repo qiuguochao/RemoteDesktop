@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("远程");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("远程");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            CCWin.SkinControl.SkinRollingBarThemeBase skinRollingBarThemeBase3 = new CCWin.SkinControl.SkinRollingBarThemeBase();
+            CCWin.SkinControl.SkinRollingBarThemeBase skinRollingBarThemeBase4 = new CCWin.SkinControl.SkinRollingBarThemeBase();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.远程ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,6 +49,7 @@
             this.删除服务器ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.断开连接ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.断开连接并关闭选项卡ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.放大或双击选项卡标题ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.新增服务器分类ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip3 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -57,7 +58,6 @@
             this.重命名ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.skinRollingBar1 = new CCWin.SkinControl.SkinRollingBar();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.放大或双击选项卡标题ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
@@ -145,14 +145,14 @@
             this.treeView1.Location = new System.Drawing.Point(8, 64);
             this.treeView1.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
             this.treeView1.Name = "treeView1";
-            treeNode1.Checked = true;
-            treeNode1.ImageKey = "c16.ico";
-            treeNode1.Name = "mainNode";
-            treeNode1.NodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            treeNode1.SelectedImageIndex = 1;
-            treeNode1.Text = "远程";
+            treeNode2.Checked = true;
+            treeNode2.ImageKey = "c16.ico";
+            treeNode2.Name = "mainNode";
+            treeNode2.NodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            treeNode2.SelectedImageIndex = 1;
+            treeNode2.Text = "远程";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
+            treeNode2});
             this.treeView1.SelectedImageIndex = 4;
             this.treeView1.Size = new System.Drawing.Size(238, 778);
             this.treeView1.StateImageList = this.imageList1;
@@ -180,35 +180,42 @@
             this.断开连接并关闭选项卡ToolStripMenuItem,
             this.放大或双击选项卡标题ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 114);
             // 
             // 远程连接双击可ToolStripMenuItem
             // 
             this.远程连接双击可ToolStripMenuItem.Name = "远程连接双击可ToolStripMenuItem";
-            this.远程连接双击可ToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.远程连接双击可ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.远程连接双击可ToolStripMenuItem.Text = "远程连接（或双击）";
             this.远程连接双击可ToolStripMenuItem.Click += new System.EventHandler(this.远程连接双击可ToolStripMenuItem_Click);
             // 
             // 删除服务器ToolStripMenuItem
             // 
             this.删除服务器ToolStripMenuItem.Name = "删除服务器ToolStripMenuItem";
-            this.删除服务器ToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.删除服务器ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.删除服务器ToolStripMenuItem.Text = "删除该服务器";
             this.删除服务器ToolStripMenuItem.Click += new System.EventHandler(this.删除服务器ToolStripMenuItem_Click);
             // 
             // 断开连接ToolStripMenuItem
             // 
             this.断开连接ToolStripMenuItem.Name = "断开连接ToolStripMenuItem";
-            this.断开连接ToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.断开连接ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.断开连接ToolStripMenuItem.Text = "断开连接";
             this.断开连接ToolStripMenuItem.Click += new System.EventHandler(this.断开连接ToolStripMenuItem_Click);
             // 
             // 断开连接并关闭选项卡ToolStripMenuItem
             // 
             this.断开连接并关闭选项卡ToolStripMenuItem.Name = "断开连接并关闭选项卡ToolStripMenuItem";
-            this.断开连接并关闭选项卡ToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.断开连接并关闭选项卡ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.断开连接并关闭选项卡ToolStripMenuItem.Text = "断开连接并关闭选项卡";
             this.断开连接并关闭选项卡ToolStripMenuItem.Click += new System.EventHandler(this.断开连接并关闭选项卡ToolStripMenuItem_Click);
+            // 
+            // 放大或双击选项卡标题ToolStripMenuItem
+            // 
+            this.放大或双击选项卡标题ToolStripMenuItem.Name = "放大或双击选项卡标题ToolStripMenuItem";
+            this.放大或双击选项卡标题ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.放大或双击选项卡标题ToolStripMenuItem.Text = "全屏(或双击选项卡标题)";
+            this.放大或双击选项卡标题ToolStripMenuItem.Click += new System.EventHandler(this.放大或双击选项卡标题ToolStripMenuItem_Click);
             // 
             // contextMenuStrip2
             // 
@@ -267,14 +274,14 @@
             this.skinRollingBar1.Style = CCWin.SkinControl.RollingBarStyle.ChromeOneQuarter;
             this.skinRollingBar1.TabIndex = 8;
             this.skinRollingBar1.TabStop = false;
-            skinRollingBarThemeBase3.BackColor = System.Drawing.Color.White;
-            skinRollingBarThemeBase3.BaseColor = System.Drawing.Color.DodgerBlue;
-            skinRollingBarThemeBase3.DiamondColor = System.Drawing.Color.Transparent;
-            skinRollingBarThemeBase3.PenWidth = 1F;
-            skinRollingBarThemeBase3.Radius1 = 10;
-            skinRollingBarThemeBase3.Radius2 = 24;
-            skinRollingBarThemeBase3.SpokeNum = 12;
-            this.skinRollingBar1.XTheme = skinRollingBarThemeBase3;
+            skinRollingBarThemeBase4.BackColor = System.Drawing.Color.White;
+            skinRollingBarThemeBase4.BaseColor = System.Drawing.Color.DodgerBlue;
+            skinRollingBarThemeBase4.DiamondColor = System.Drawing.Color.Transparent;
+            skinRollingBarThemeBase4.PenWidth = 1F;
+            skinRollingBarThemeBase4.Radius1 = 10;
+            skinRollingBarThemeBase4.Radius2 = 24;
+            skinRollingBarThemeBase4.SpokeNum = 12;
+            this.skinRollingBar1.XTheme = skinRollingBarThemeBase4;
             // 
             // tabControl1
             // 
@@ -285,12 +292,6 @@
             this.tabControl1.Size = new System.Drawing.Size(1054, 778);
             this.tabControl1.TabIndex = 9;
             this.tabControl1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseDoubleClick);
-            // 
-            // 放大或双击选项卡标题ToolStripMenuItem
-            // 
-            this.放大或双击选项卡标题ToolStripMenuItem.Name = "放大或双击选项卡标题ToolStripMenuItem";
-            this.放大或双击选项卡标题ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-            this.放大或双击选项卡标题ToolStripMenuItem.Text = "全屏(或双击选项卡标题)";
             // 
             // Form1
             // 
@@ -304,6 +305,8 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "远程桌面管理v1.0.0-【可乐不加冰】";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);
