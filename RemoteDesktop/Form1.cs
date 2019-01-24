@@ -299,6 +299,17 @@ namespace RemoteDesktop
                                     info.Enabled = true;
                                 }
                                 break;
+                            case "关闭选项卡":
+                                var currentPage = this.tabControl1.Controls.Find(CurrentNode.Name, true);
+                                if (currentPage.Count()==0||(rdp.Count() > 0 && rdp.FirstOrDefault().Connected == 1))
+                                {
+                                    info.Enabled = false;
+                                }
+                                else
+                                {
+                                    info.Enabled = true;
+                                }
+                                break;
                             default:
                                 break;
                         }
@@ -523,6 +534,36 @@ namespace RemoteDesktop
             rdpcArry.Where(p => p.Name == selectedNode.Name).FirstOrDefault().FullScreen=true;
 
         }
+        /// <summary>
+        /// 关闭选项卡
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 关闭选项卡ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //必须是未连接才能关闭
+            var selectedNode = treeView1.SelectedNode;
+            if (rdpcArry.Where(p => p.Name == selectedNode.Name).FirstOrDefault().Connected == 2)
+            {
+                MessageBox.Show("正在连接，请稍等在关闭！", null, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (rdpcArry.Where(p => p.Name == selectedNode.Name).FirstOrDefault().Connected==0)
+            {
+                //删除tabpage也要删除list中的数据
+                rdpcArry.RemoveAll(p => p.Name == selectedNode.Name);
+                this.tabControl1.TabPages.RemoveByKey(selectedNode.Name);
+            }
+        }
+        /// <summary>
+        /// 详情查看
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 详情ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new ServerDetailForm(this).Show();
+        }
         #endregion
 
         #region 事件处理（tabpage区域）
@@ -533,17 +574,17 @@ namespace RemoteDesktop
         /// <param name="e"></param>
         private void tabControl1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            MessageBox.Show("111", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //MessageBox.Show("111", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         #endregion
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
-            foreach (var item in rdpcArry)
-            {
-                //item.DesktopHeight = this.tabControl1.Height;
-                //item.DesktopWidth= this.tabControl1.Width;
-            }
+            //foreach (var item in rdpcArry)
+            //{
+            //    //item.DesktopHeight = this.tabControl1.Height;
+            //    //item.DesktopWidth= this.tabControl1.Width;
+            //}
         }
     }
 }

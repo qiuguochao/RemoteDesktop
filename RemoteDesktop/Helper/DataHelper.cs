@@ -51,7 +51,8 @@ namespace RemoteDesktop.Helper
                 int r = fsRead.Read(hebyte, 0, hebyte.Length);
                 Encoding encode = Encoding.UTF8;
                 //以Unicode方式读取文件
-                result = encode.GetString(hebyte);
+                var decStr = EncryptDecryptHelper.DESDecrypt(encode.GetString(hebyte));
+                result = decStr == null?"": decStr;
             }
             return IfNull(JsonConvert.DeserializeObject<Base>(result));
         }
@@ -61,7 +62,7 @@ namespace RemoteDesktop.Helper
             using (FileStream fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
             {
                 StreamWriter sw = new StreamWriter(fs);             
-                sw.Write(str);
+                sw.Write(EncryptDecryptHelper.DESEncrypt(str));
                 sw.Flush();
                 sw.Close();
             }

@@ -86,6 +86,12 @@
     <Compile Include="Model\ServerType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerDetailForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ServerDetailForm.Designer.cs">
+      <DependentUpon>ServerDetailForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AddServer.resx">
       <DependentUpon>AddServer.cs</DependentUpon>
     </EmbeddedResource>
@@ -105,6 +111,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="ServerDetailForm.resx">
+      <DependentUpon>ServerDetailForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

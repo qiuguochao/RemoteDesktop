@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("远程");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("远程");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            CCWin.SkinControl.SkinRollingBarThemeBase skinRollingBarThemeBase4 = new CCWin.SkinControl.SkinRollingBarThemeBase();
+            CCWin.SkinControl.SkinRollingBarThemeBase skinRollingBarThemeBase3 = new CCWin.SkinControl.SkinRollingBarThemeBase();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.远程ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,6 +58,8 @@
             this.重命名ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.skinRollingBar1 = new CCWin.SkinControl.SkinRollingBar();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.关闭选项卡ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.详情ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
@@ -145,14 +147,14 @@
             this.treeView1.Location = new System.Drawing.Point(8, 64);
             this.treeView1.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
             this.treeView1.Name = "treeView1";
-            treeNode2.Checked = true;
-            treeNode2.ImageKey = "c16.ico";
-            treeNode2.Name = "mainNode";
-            treeNode2.NodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            treeNode2.SelectedImageIndex = 1;
-            treeNode2.Text = "远程";
+            treeNode1.Checked = true;
+            treeNode1.ImageKey = "c16.ico";
+            treeNode1.Name = "mainNode";
+            treeNode1.NodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            treeNode1.SelectedImageIndex = 1;
+            treeNode1.Text = "远程";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode2});
+            treeNode1});
             this.treeView1.SelectedImageIndex = 4;
             this.treeView1.Size = new System.Drawing.Size(238, 778);
             this.treeView1.StateImageList = this.imageList1;
@@ -174,13 +176,15 @@
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.详情ToolStripMenuItem,
             this.远程连接双击可ToolStripMenuItem,
             this.删除服务器ToolStripMenuItem,
+            this.关闭选项卡ToolStripMenuItem,
             this.断开连接ToolStripMenuItem,
             this.断开连接并关闭选项卡ToolStripMenuItem,
             this.放大或双击选项卡标题ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 180);
             // 
             // 远程连接双击可ToolStripMenuItem
             // 
@@ -274,14 +278,14 @@
             this.skinRollingBar1.Style = CCWin.SkinControl.RollingBarStyle.ChromeOneQuarter;
             this.skinRollingBar1.TabIndex = 8;
             this.skinRollingBar1.TabStop = false;
-            skinRollingBarThemeBase4.BackColor = System.Drawing.Color.White;
-            skinRollingBarThemeBase4.BaseColor = System.Drawing.Color.DodgerBlue;
-            skinRollingBarThemeBase4.DiamondColor = System.Drawing.Color.Transparent;
-            skinRollingBarThemeBase4.PenWidth = 1F;
-            skinRollingBarThemeBase4.Radius1 = 10;
-            skinRollingBarThemeBase4.Radius2 = 24;
-            skinRollingBarThemeBase4.SpokeNum = 12;
-            this.skinRollingBar1.XTheme = skinRollingBarThemeBase4;
+            skinRollingBarThemeBase3.BackColor = System.Drawing.Color.White;
+            skinRollingBarThemeBase3.BaseColor = System.Drawing.Color.DodgerBlue;
+            skinRollingBarThemeBase3.DiamondColor = System.Drawing.Color.Transparent;
+            skinRollingBarThemeBase3.PenWidth = 1F;
+            skinRollingBarThemeBase3.Radius1 = 10;
+            skinRollingBarThemeBase3.Radius2 = 24;
+            skinRollingBarThemeBase3.SpokeNum = 12;
+            this.skinRollingBar1.XTheme = skinRollingBarThemeBase3;
             // 
             // tabControl1
             // 
@@ -292,6 +296,20 @@
             this.tabControl1.Size = new System.Drawing.Size(1054, 778);
             this.tabControl1.TabIndex = 9;
             this.tabControl1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseDoubleClick);
+            // 
+            // 关闭选项卡ToolStripMenuItem
+            // 
+            this.关闭选项卡ToolStripMenuItem.Name = "关闭选项卡ToolStripMenuItem";
+            this.关闭选项卡ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.关闭选项卡ToolStripMenuItem.Text = "关闭选项卡";
+            this.关闭选项卡ToolStripMenuItem.Click += new System.EventHandler(this.关闭选项卡ToolStripMenuItem_Click);
+            // 
+            // 详情ToolStripMenuItem
+            // 
+            this.详情ToolStripMenuItem.Name = "详情ToolStripMenuItem";
+            this.详情ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.详情ToolStripMenuItem.Text = "详情";
+            this.详情ToolStripMenuItem.Click += new System.EventHandler(this.详情ToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -344,6 +362,8 @@
         private System.Windows.Forms.ToolStripMenuItem 断开连接ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 断开连接并关闭选项卡ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 放大或双击选项卡标题ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 关闭选项卡ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 详情ToolStripMenuItem;
     }
 }
 
