@@ -248,10 +248,9 @@ namespace RemoteDesktop
         {
             var t = Task.Factory.StartNew(() =>
             {
-
+                Process CurrentProcess = Process.GetCurrentProcess();
                 while (this!=null)
                 {
-                    Process CurrentProcess = Process.GetCurrentProcess();
                     var currentMemory= (CurrentProcess.WorkingSet64 / 1024 / 1024).ToString()+"M";//占用内存
                     if (this.WorkingSet.InvokeRequired)
                     {
