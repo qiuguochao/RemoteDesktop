@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -25,7 +27,7 @@ namespace RemoteDesktop
             InitTree();
             this.skinRollingBar1.StopRolling();
             this.skinRollingBar1.Visible = false;
-            //var abcd = EncryptDecryptHelper.DESEncrypt("我哎你我哎你我哎你我哎你我哎你我哎你我哎你我哎你[];");
+            MemoryShow();
         }
         #region 私有方法
         /// <summary>
@@ -103,7 +105,10 @@ namespace RemoteDesktop
                     case 516:
                         MessageBox.Show("远程服务器可能未连接或异常！", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         break;
+                    case 1:// 不提示；Local disconnection. This is not an error code.
+                        break;
                     default:
+                        MessageBox.Show("未知错误："+ e.discReason.ToString(), null, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         break;
                 }
             }
@@ -126,7 +131,6 @@ namespace RemoteDesktop
             try
             {
                 //切换成已断开图标
-                //var selectedNode = treeView1.SelectedNode;
                 var currentClient = (AxMSTSCLib.AxMsRdpClient8NotSafeForScripting)sender;
                 var selectedNode = treeView1.Nodes.Find(currentClient.Name, true)[0];
                 selectedNode.ImageIndex = 0;
@@ -209,10 +213,12 @@ namespace RemoteDesktop
                     rdpc.Server = currentServer.Ip;                                     //远程桌面的IP地址或者域名
                     rdpc.Domain = currentServer.Domain;                                 //远程服务器所在的域
                     rdpc.UserName = currentServer.UserName;                             //系统用户名
-                    rdpc.AdvancedSettings2.ClearTextPassword = currentServer.Password;  //系统登录密码
-                    rdpc.AdvancedSettings2.RDPPort = 3389;
-                    rdpc.AdvancedSettings2.RedirectDrives = true;
-                    rdpc.AdvancedSettings2.RedirectPrinters = true;
+                    rdpc.AdvancedSettings9.ClearTextPassword = currentServer.Password;  //系统登录密码
+                    rdpc.AdvancedSettings9.RDPPort = 3389;
+                    rdpc.AdvancedSettings9.RedirectDrives = true;
+                    rdpc.AdvancedSettings9.RedirectPrinters = true;
+                    rdpc.AdvancedSettings9.EnableCredSspSupport = true;
+                    rdpc.AdvancedSettings9.AuthenticationLevel = 0;
                     rdpc.ConnectingText = "正在连接.....";
                     rdpc.ColorDepth = 24;
                     rdpc.Name = node.Name;
@@ -234,6 +240,34 @@ namespace RemoteDesktop
 
                 MessageBox.Show(ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        /// <summary>
+        /// 显示占用内存
+        /// </summary>
+        private void MemoryShow()
+        {
+            var t = Task.Factory.StartNew(() =>
+            {
+
+                while (this!=null)
+                {
+                    Process CurrentProcess = Process.GetCurrentProcess();
+                    var currentMemory= (CurrentProcess.WorkingSet64 / 1024 / 1024).ToString()+"M";//占用内存
+                    if (this.WorkingSet.InvokeRequired)
+                    {
+                        this.WorkingSet.Invoke(new Action<string>(ChangeText), currentMemory);
+                    }
+                    else
+                    {
+                        ChangeText(currentMemory);
+                    }
+                    Thread.Sleep(2000);
+                }
+            });
+        }
+        private void ChangeText(string str)
+        {
+            this.WorkingSet.Text = str;
         }
         #endregion
 
@@ -470,15 +504,17 @@ namespace RemoteDesktop
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             var selectedNode = e.Node;
-            if (this.tabControl1.InvokeRequired)
+            Task.Factory.StartNew(() =>
             {
-                this.tabControl1.Invoke(new Action<TreeNode>(ConnectingServer), selectedNode);
-            }
-            else
-            {
-                ConnectingServer(selectedNode);
-            }
-
+                if (this.tabControl1.InvokeRequired)
+                {
+                    this.tabControl1.Invoke(new Action<TreeNode>(ConnectingServer), selectedNode);
+                }
+                else
+                {
+                    ConnectingServer(selectedNode);
+                }
+            });           
         }
         /// <summary>
         ///  断开连接
@@ -511,14 +547,17 @@ namespace RemoteDesktop
         private void 远程连接双击可ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selectedNode = treeView1.SelectedNode;
-            if (this.tabControl1.InvokeRequired)
+            Task.Factory.StartNew(() =>
             {
-                this.tabControl1.Invoke(new Action<TreeNode>(ConnectingServer), selectedNode);
-            }
-            else
-            {
-                ConnectingServer(selectedNode);
-            }
+                if (this.tabControl1.InvokeRequired)
+                {
+                    this.tabControl1.Invoke(new Action<TreeNode>(ConnectingServer), selectedNode);
+                }
+                else
+                {
+                    ConnectingServer(selectedNode);
+                }
+            });
         }
         /// <summary>
         /// 右键全屏
@@ -563,6 +602,17 @@ namespace RemoteDesktop
         private void 详情ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new ServerDetailForm(this).Show();
+        }
+        /// <summary>
+        /// 窗体关闭
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            System.Environment.Exit(System.Environment.ExitCode);
+            this.Dispose();
+            this.Close();
         }
         #endregion
 

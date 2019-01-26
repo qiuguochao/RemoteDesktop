@@ -39,11 +39,11 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -134,6 +134,16 @@
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.ForeColor = System.Drawing.Color.DimGray;
+            this.label8.Location = new System.Drawing.Point(10, 57);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(245, 12);
+            this.label8.TabIndex = 2;
+            this.label8.Text = "服务器分类可以在左边树形结构进行添加操作";
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -171,16 +181,6 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(139, 20);
             this.comboBox1.TabIndex = 12;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.ForeColor = System.Drawing.Color.DimGray;
-            this.label8.Location = new System.Drawing.Point(10, 60);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(245, 12);
-            this.label8.TabIndex = 2;
-            this.label8.Text = "服务器分类可以在左边树形结构进行添加操作";
             // 
             // AddServerForm
             // 
